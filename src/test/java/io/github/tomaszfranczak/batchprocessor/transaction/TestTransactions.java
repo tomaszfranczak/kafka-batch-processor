@@ -3,12 +3,12 @@ package io.github.tomaszfranczak.batchprocessor.transaction;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-public final class TransactionFixtures {
+public final class TestTransactions {
 
-    private TransactionFixtures() {
+    private TestTransactions() {
     }
 
-    public static Transaction.TransactionBuilder aTransaction() {
+    public static Transaction.TransactionBuilder validTransaction() {
         return Transaction.builder()
                 .transactionId("tx-1")
                 .orderId("order-1")

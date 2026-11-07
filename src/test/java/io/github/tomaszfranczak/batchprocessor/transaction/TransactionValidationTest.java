@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static io.github.tomaszfranczak.batchprocessor.transaction.TransactionFixtures.aTransaction;
+import static io.github.tomaszfranczak.batchprocessor.transaction.TestTransactions.validTransaction;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TransactionValidationTest {
@@ -37,7 +37,7 @@ class TransactionValidationTest {
     @Test
     void validTransactionHasNoViolations() {
         // given
-        Transaction transaction = aTransaction().build();
+        Transaction transaction = validTransaction().build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -51,7 +51,7 @@ class TransactionValidationTest {
     @ValueSource(strings = " ")
     void blankTransactionIdIsRejected(String transactionId) {
         // given
-        Transaction transaction = aTransaction().transactionId(transactionId).build();
+        Transaction transaction = validTransaction().transactionId(transactionId).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -65,7 +65,7 @@ class TransactionValidationTest {
     @ValueSource(strings = " ")
     void blankOrderIdIsRejected(String orderId) {
         // given
-        Transaction transaction = aTransaction().orderId(orderId).build();
+        Transaction transaction = validTransaction().orderId(orderId).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -79,7 +79,7 @@ class TransactionValidationTest {
     @ValueSource(strings = " ")
     void blankAccountIdIsRejected(String accountId) {
         // given
-        Transaction transaction = aTransaction().accountId(accountId).build();
+        Transaction transaction = validTransaction().accountId(accountId).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -92,7 +92,7 @@ class TransactionValidationTest {
     @ValueSource(strings = {"BTC-USDT", "ETH-BTC", "1INCH-USDT"})
     void symbolInBaseQuoteFormatIsAccepted(String symbol) {
         // given
-        Transaction transaction = aTransaction().symbol(symbol).build();
+        Transaction transaction = validTransaction().symbol(symbol).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -106,7 +106,7 @@ class TransactionValidationTest {
     @ValueSource(strings = {" ", "BTC", "btc-usdt", "BTC-", "-USDT", "BTC/USDT", "BTC-USDT-PERP", " BTC-USDT"})
     void symbolNotInBaseQuoteFormatIsRejected(String symbol) {
         // given
-        Transaction transaction = aTransaction().symbol(symbol).build();
+        Transaction transaction = validTransaction().symbol(symbol).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -118,7 +118,7 @@ class TransactionValidationTest {
     @Test
     void missingSideIsRejected() {
         // given
-        Transaction transaction = aTransaction().side(null).build();
+        Transaction transaction = validTransaction().side(null).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -132,7 +132,7 @@ class TransactionValidationTest {
     @ValueSource(strings = {"0", "0.00", "-1", "-0.0001"})
     void nonPositivePriceIsRejected(BigDecimal price) {
         // given
-        Transaction transaction = aTransaction().price(price).build();
+        Transaction transaction = validTransaction().price(price).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -146,7 +146,7 @@ class TransactionValidationTest {
     @ValueSource(strings = {"0", "0.00", "-1", "-0.0001"})
     void nonPositiveQuantityIsRejected(BigDecimal quantity) {
         // given
-        Transaction transaction = aTransaction().quantity(quantity).build();
+        Transaction transaction = validTransaction().quantity(quantity).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -158,7 +158,7 @@ class TransactionValidationTest {
     @Test
     void missingExecutionTimeIsRejected() {
         // given
-        Transaction transaction = aTransaction().executionTime(null).build();
+        Transaction transaction = validTransaction().executionTime(null).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
@@ -170,7 +170,7 @@ class TransactionValidationTest {
     @Test
     void everyInvalidFieldIsReported() {
         // given
-        Transaction transaction = aTransaction().transactionId("").price(BigDecimal.ZERO).side(null).build();
+        Transaction transaction = validTransaction().transactionId("").price(BigDecimal.ZERO).side(null).build();
 
         // when
         List<String> invalidFields = invalidFields(transaction);
