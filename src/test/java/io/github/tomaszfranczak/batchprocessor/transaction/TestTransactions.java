@@ -5,6 +5,19 @@ import java.time.Instant;
 
 public final class TestTransactions {
 
+    public static final String VALID_TRANSACTION_JSON = """
+            {
+              "transactionId": "tx-1",
+              "orderId": "order-1",
+              "accountId": "account-1",
+              "symbol": "BTC-USDT",
+              "side": "BUY",
+              "price": 67250.50,
+              "quantity": 0.015,
+              "executionTime": "2026-11-07T12:00:00Z"
+            }
+            """;
+
     private TestTransactions() {
     }
 
