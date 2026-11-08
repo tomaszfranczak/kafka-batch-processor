@@ -4,6 +4,9 @@ spring:
   threads:
     virtual:
       enabled: true
+  web:
+    locale: en
+    locale-resolver: fixed
   kafka:
     bootstrap-servers: localhost:9092
     producer:

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -56,6 +57,23 @@ class TransactionControllerTest {
         assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
         assertThat(result).bodyJson().extractingPath("$.errors").asMap().containsOnlyKeys("price", "symbol");
         verifyNoInteractions(publisher);
+    }
+
+    @Test
+    @WithMockUser
+    void validationMessagesAreInEnglishRegardlessOfTheRequestedLanguage() {
+        // given
+        String transaction = VALID_TRANSACTION_JSON.replace("\"price\": 67250.50", "\"price\": 0");
+
+        // when
+        MvcTestResult result = mvc.post().uri("/api/transactions")
+                .header(HttpHeaders.ACCEPT_LANGUAGE, "pl-PL")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(transaction)
+                .exchange();
+
+        // then
+        assertThat(result).bodyJson().extractingPath("$.errors.price").isEqualTo("must be greater than 0");
     }
 
     @Test
