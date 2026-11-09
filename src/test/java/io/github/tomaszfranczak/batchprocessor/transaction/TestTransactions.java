@@ -2,6 +2,7 @@ package io.github.tomaszfranczak.batchprocessor.transaction;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 public final class TestTransactions {
 
@@ -19,6 +20,10 @@ public final class TestTransactions {
             """;
 
     private TestTransactions() {
+    }
+
+    public static String uniqueId(String prefix) {
+        return prefix + "-" + UUID.randomUUID();
     }
 
     public static Transaction.TransactionBuilder validTransaction() {
