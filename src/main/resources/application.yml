@@ -7,6 +7,8 @@ spring:
   web:
     locale: en
     locale-resolver: fixed
+  datasource:
+    url: jdbc:postgresql://localhost:5432/transactions
   kafka:
     bootstrap-servers: localhost:9092
     producer:

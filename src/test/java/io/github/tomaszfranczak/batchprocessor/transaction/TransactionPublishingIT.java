@@ -1,24 +1,19 @@
 package io.github.tomaszfranczak.batchprocessor.transaction;
 
+import io.github.tomaszfranczak.batchprocessor.IntegrationTest;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.KafkaContainer;
 
 import java.time.Duration;
@@ -30,17 +25,13 @@ import static io.github.tomaszfranczak.batchprocessor.transaction.TestTransactio
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Testcontainers
+@IntegrationTest
 class TransactionPublishingIT {
 
     private static final String TOPIC = "transactions";
 
-    @Container
-    @ServiceConnection
-    static KafkaContainer kafka = new KafkaContainer("apache/kafka-native:4.4.0");
+    @Autowired
+    private KafkaContainer kafka;
 
     @Autowired
     private MockMvcTester mvc;
@@ -65,7 +56,7 @@ class TransactionPublishingIT {
         }
     }
 
-    private static Consumer<String, Transaction> transactionsConsumer() {
+    private Consumer<String, Transaction> transactionsConsumer() {
         Map<String, Object> properties = Map.of(
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers(),
                 ConsumerConfig.GROUP_ID_CONFIG, "transaction-publishing-it",
