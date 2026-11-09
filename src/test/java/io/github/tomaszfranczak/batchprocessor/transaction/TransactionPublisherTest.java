@@ -1,6 +1,5 @@
 package io.github.tomaszfranczak.batchprocessor.transaction;
 
-import io.github.tomaszfranczak.batchprocessor.kafka.TransactionTopicProperties;
 import org.apache.kafka.common.KafkaException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
