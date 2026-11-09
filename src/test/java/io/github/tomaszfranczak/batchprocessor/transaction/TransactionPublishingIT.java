@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
@@ -66,15 +67,19 @@ class TransactionPublishingIT {
         List<ConsumerRecord<String, Transaction>> received = new ArrayList<>();
         try (Consumer<String, Transaction> consumer = transactionsConsumer()) {
             consumer.subscribe(List.of(TOPIC));
-            await().atMost(Duration.ofSeconds(10)).until(() -> {
+            await().atMost(Duration.ofSeconds(10)).pollInSameThread().until(() -> {
                 consumer.poll(Duration.ofMillis(200)).forEach(received::add);
-                return received.stream().anyMatch(record -> record.value().transactionId().equals(transactionId));
+                return received.stream().anyMatch(record -> hasId(record, transactionId));
             });
         }
         return received.stream()
-                .filter(record -> record.value().transactionId().equals(transactionId))
+                .filter(record -> hasId(record, transactionId))
                 .findFirst()
                 .orElseThrow();
+    }
+
+    private static boolean hasId(ConsumerRecord<String, Transaction> record, String transactionId) {
+        return record.value() != null && record.value().transactionId().equals(transactionId);
     }
 
     private Consumer<String, Transaction> transactionsConsumer() {
@@ -83,7 +88,9 @@ class TransactionPublishingIT {
                 ConsumerConfig.GROUP_ID_CONFIG, uniqueId("transaction-publishing-it"),
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return new DefaultKafkaConsumerFactory<>(
-                properties, new StringDeserializer(), new JacksonJsonDeserializer<>(Transaction.class))
+                properties,
+                new StringDeserializer(),
+                new ErrorHandlingDeserializer<>(new JacksonJsonDeserializer<>(Transaction.class)))
                 .createConsumer();
     }
 }

@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static io.github.tomaszfranczak.batchprocessor.transaction.TestTransactions.validTransaction;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +27,7 @@ class TransactionBatchListenerTest {
         List<Transaction> batch = List.of(
                 validTransaction().transactionId("tx-1").build(),
                 validTransaction().transactionId("tx-2").build());
+        given(service.store(batch)).willReturn(new StoreResult(2, 0));
 
         // when
         listener.onBatch(batch);
