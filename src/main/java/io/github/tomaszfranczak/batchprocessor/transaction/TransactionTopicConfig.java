@@ -15,4 +15,12 @@ class TransactionTopicConfig {
                 .replicas(topic.replicas())
                 .build();
     }
+
+    @Bean
+    NewTopic transactionsDeadLetterTopic(TransactionTopicProperties topic) {
+        return TopicBuilder.name(topic.deadLetterName())
+                .partitions(topic.partitions())
+                .replicas(topic.replicas())
+                .build();
+    }
 }

@@ -11,4 +11,8 @@ record TransactionTopicProperties(
         @NotBlank String name,
         @Positive int partitions,
         @Positive int replicas) {
+
+    String deadLetterName() {
+        return name + ".DLT";
+    }
 }
